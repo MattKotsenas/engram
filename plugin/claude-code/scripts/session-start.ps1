@@ -24,8 +24,10 @@ $Project = Get-EngramProject $Cwd
 try {
     Invoke-RestMethod -Uri "$EngramUrl/health" -TimeoutSec 1 -ErrorAction Stop | Out-Null
 } catch {
-    Start-Process -FilePath "engram" -ArgumentList "serve" -WindowStyle Hidden
-    Start-Sleep -Milliseconds 500
+    try {
+        Start-Process -FilePath "engram" -ArgumentList "serve" -WindowStyle Hidden
+        Start-Sleep -Milliseconds 500
+    } catch {}
 }
 
 # Migrate project name if it changed
@@ -50,7 +52,7 @@ if ($SessionId -and $Project) {
 
 # Auto-import git-synced chunks
 if (Test-Path (Join-Path $Cwd ".engram" "manifest.json")) {
-    & engram sync --import 2>$null
+    try { & engram sync --import 2>$null } catch {}
 }
 
 # Fetch memory context
@@ -82,14 +84,14 @@ Call ``mem_save`` IMMEDIATELY after ANY of these:
 - Pattern established (naming, structure, approach)
 - User preference or constraint learned
 - Feature implemented with non-obvious approach
-- User confirms your recommendation ("dale", "go with that", "sounds good")
-- User rejects an approach or expresses a preference ("no, better X", "I prefer X")
+- User confirms your recommendation ("dale", "go with that", "sounds good", "si, esa")
+- User rejects an approach or expresses a preference ("no, better X", "I prefer X", "siempre hace X")
 - Discussion concludes with a clear direction chosen
 
 **Self-check after EVERY task**: "Did I or the user just make a decision, confirm a recommendation, express a preference, fix a bug, learn something, or establish a convention? If yes -> mem_save NOW."
 
 ### SEARCH MEMORY when:
-- User asks to recall anything ("remember", "what did we do")
+- User asks to recall anything ("remember", "what did we do", "acordate", "que hicimos")
 - Starting work on something that might have been done before
 - User mentions a topic you have no context on
 - User's FIRST message references the project, a feature, or a problem - call ``mem_search`` with keywords from their message to check for prior work before responding

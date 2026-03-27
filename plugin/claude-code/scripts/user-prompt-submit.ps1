@@ -29,7 +29,8 @@ $Output = "{}"
 if ($SessionId) {
     $SessionKey = "engram-claude-$SessionId-tools-loaded"
 } else {
-    $SafeProject = ($Project ?? "unknown") -replace '[^a-zA-Z0-9_-]', '_'
+    $SafeProject = if ($Project) { $Project } else { "unknown" }
+    $SafeProject = $SafeProject -replace '[^a-zA-Z0-9_-]', '_'
     $SessionKey = "engram-claude-$SafeProject-$PID-tools-loaded"
 }
 
